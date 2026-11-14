@@ -1,0 +1,33 @@
+name: Import verified AUTOPILOT v12.1 snapshot
+on:
+  push:
+    branches:
+      - feature/fullstack-v13-sandbox
+    paths:
+      - .github/workflows/import-verified-v12.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download files only if all checksums match
+        run: bash scripts/import_verified_v12_1.sh
+      - name: Verify existing JavaScript tests
+        run: |
+          cd snapshots/v12.1
+          node tests/test-core.js
+          node tests/test-store.js
+      - name: Commit pinned snapshot to development branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add snapshots/v12.1
+          if ! git diff --cached --quiet; then
+            git commit -m 'Import verified v12.1 static site snapshot'
+            git push
+          fi
