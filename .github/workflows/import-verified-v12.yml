@@ -1,10 +1,5 @@
 name: Import verified AUTOPILOT v12.1 snapshot
 on:
-  push:
-    branches:
-      - feature/fullstack-v13-sandbox
-    paths:
-      - .github/workflows/import-verified-v12.yml
   workflow_dispatch:
 permissions:
   contents: write
